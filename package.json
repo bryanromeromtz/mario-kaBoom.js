@@ -1,0 +1,24 @@
+{
+  "name": "mario-kaboom",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "start": "nodemon server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bryanromeromtz/mario-kaBoom.js.git"
+  },
+  "keywords": [],
+  "author": "bryanromero <bryanromero5011@gmail.com> (https://www.npmjs.com/~bryanromero)",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/bryanromeromtz/mario-kaBoom.js/issues"
+  },
+  "homepage": "https://github.com/bryanromeromtz/mario-kaBoom.js#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "nodemon": "^2.0.12"
+  }
+}
