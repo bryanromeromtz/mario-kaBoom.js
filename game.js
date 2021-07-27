@@ -10,6 +10,7 @@ const MOVE_SPEED = 120;
 const JUMP_FORCE = 360;
 const BIG_JUMP_FORCE = 550;
 const ENEMY_SPEED = 60;
+let FALL_DEATH = 500;
 let CURRENT_JUMP_FORCE = JUMP_FORCE;
 let isJumping = true;
 
@@ -27,11 +28,12 @@ loadSprite('pipe-top-left', '/pipe-top-left.png')
 loadSprite('pipe-top-right', '/pipe-top-right.png')
 loadSprite('pipe-bottom-left', '/pipe-bottom-left.png')
 loadSprite('pipe-bottom-right', '/pipe-bottom-right.png')
+//loadSprite('mario-jump', '/mario-jump.png')
 
-scene("game", ({ score }) => {
+scene("game", ({ level, score }) => {
   layers(['bg', 'obj', 'iu'], 'obj')
 
-  const map =
+  const maps = [
     [
       '                                      ',
       '                                      ',
@@ -43,7 +45,20 @@ scene("game", ({ score }) => {
       '                            -+        ',
       '                    ^   ^   ()        ',
       '==============================   =====',
+    ],
+    [
+      '£                                       £',
+      '£                                       £',
+      '£                                       £',
+      '£                                       £',
+      '£                                       £',
+      '£        @@@@@@              x x        £',
+      '£                          x x x        £',
+      '£                        x x x x  x   -+£',
+      '£               z   z  x x x x x  x   ()£',
+      '!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!',
     ]
+  ]
 
   const levelCfg = {
     width: 20,
@@ -57,24 +72,22 @@ scene("game", ({ score }) => {
     ')': [sprite('pipe-bottom-right'), solid(), scale(0.5)],
     '-': [sprite('pipe-top-left'), solid(), scale(0.5), 'pipe'],
     '+': [sprite('pipe-top-right'), solid(), scale(0.5), 'pipe'],
-    '^': [sprite('evil-shroom'), solid(), 'dangerous'],
+    '^': [sprite('evil-shroom'), solid(), 'dangerous', body()],
     '#': [sprite('mushroom'), solid(), 'mushroom', body()]
   }
 
-  const gameLevel = addLevel(map, levelCfg);
+  const gameLevel = addLevel(maps[level], levelCfg);
 
   const scoreLabel = add([
     text(score),
-    pos(30, 6),
+    pos(20, 7),
     layer('ui'),
     {
       value: score,
     }
   ])
 
-  add([
-    text('level' + 'test', pos(4, 6))
-  ])
+  add([text('level' + parseInt(level + 1)), pos(40, 6)])
 
   function big() {
     timer = 0;
@@ -156,6 +169,26 @@ scene("game", ({ score }) => {
     }
   })
 
+  player.action(() => {
+    camPos(player.pos);
+    if (player.pos.y >= FALL_DEATH) {
+      go('lose', { score: scoreLabel.value });
+    }
+  })
+
+
+
+  player.collides("pipe", () => {
+    keyPress("down", () => {
+      go("game", {
+        level: (level + 1),
+        score: scoreLabel.value
+      })
+
+    })
+
+  })
+
   keyDown("left", () => {
     player.move(-MOVE_SPEED, 0);
   });
@@ -181,10 +214,15 @@ scene("game", ({ score }) => {
 
 scene("lose", ({ score }) => {
   add([
+    text("ESTAS MUERTO", 30,),
+    origin("center"),
+    pos(width() / 2, height() / 2.7)
+  ])
+  add([
     text(score, 32),
     origin("center"),
     pos(width() / 2, height() / 2)
   ])
 })
 
-start("game", { score: 0 })
+start("game", { level: 0, score: 0 })
