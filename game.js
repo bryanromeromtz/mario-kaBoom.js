@@ -33,6 +33,7 @@ loadSprite('blue-brick', '/blue-brick.png')
 loadSprite('blue-steel', '/blue-steel.png')
 loadSprite('blue-evil-shroom', '/blue-evil-shroom.png')
 loadSprite('blue-surprise', '/blue-surprise.png')
+loadSprite('flower', '/flower.png')
 
 scene("game", ({ level, score }) => {
   layers(['bg', 'obj', 'iu'], 'obj')
@@ -56,7 +57,7 @@ scene("game", ({ level, score }) => {
       '£                                       £',
       '£                                       £',
       '£                                       £',
-      '£        @@@@@@              x x        £',
+      '£        @`@@&@              x x        £',
       '£                          x x x        £',
       '£                        x x x x  x   -+£',
       '£               z   z  x x x x x  x   ()£',
@@ -80,23 +81,31 @@ scene("game", ({ level, score }) => {
     '#': [sprite('mushroom'), solid(), 'mushroom', body()],
     '!': [sprite('blue-block'), solid(), scale(0.5)],
     '£': [sprite('blue-brick'), solid(), scale(0.5)],
-    //'z': [sprite('blue-evil-shroom'), solid(), scale(0.5), 'dangerous'],
-    //'@': [sprite('blue-surprise'), solid(), scale(0.5), 'coin-surprise'],
+    'z': [sprite('blue-evil-shroom'), solid(), scale(0.5), 'dangerous'],
+    '@': [sprite('blue-surprise'), solid(), scale(0.5), 'coin-surprise'],
+    '`': [sprite('blue-surprise'), solid(), scale(0.5), 'flower-surprise'],
+    '&': [sprite('blue-surprise'), solid(), scale(0.5), 'ggg'],
+    '?': [sprite('flower'), 'flower', body()],
     'x': [sprite('blue-steel'), solid(), scale(0.5)],
   }
 
   const gameLevel = addLevel(maps[level], levelCfg);
 
   const scoreLabel = add([
+    add([
+      text('score'),
+      pos(40, -9),
+      layer('ui'),
+    ]),
     text(score),
-    pos(20, 7),
+    pos(88, -7),
     layer('ui'),
     {
       value: score,
     }
   ])
 
-  add([text('level' + parseInt(level + 1)), pos(40, 6)])
+  add([text('level ' + parseInt(level + 1)), pos(40, 6)])
 
   function big() {
     timer = 0;
@@ -152,6 +161,16 @@ scene("game", ({ level, score }) => {
       gameLevel.spawn('}', obj.gridPos.sub(0, 0));
     }
     if (obj.is('mushroom-surprise')) {
+      gameLevel.spawn('#', obj.gridPos.sub(0, 1));
+      destroy(obj);
+      gameLevel.spawn('}', obj.gridPos.sub(0, 0));
+    }
+    if (obj.is('flower-surprise')) {
+      gameLevel.spawn('?', obj.gridPos.sub(0, 1));
+      destroy(obj);
+      gameLevel.spawn('}', obj.gridPos.sub(0, 0));
+    }
+    if (obj.is('ggg')) {
       gameLevel.spawn('#', obj.gridPos.sub(0, 1));
       destroy(obj);
       gameLevel.spawn('}', obj.gridPos.sub(0, 0));
@@ -226,7 +245,7 @@ scene("game", ({ level, score }) => {
 
 scene("lose", ({ score }) => {
   add([
-    text("SCORE", 30,),
+    text("SCORE", 30),
     origin("center"),
     pos(width() / 2, height() / 2.7)
   ])
