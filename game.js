@@ -18,7 +18,6 @@ let isJumping = true;
 loadRoot('sprites')
 loadSprite('coin', '/coin.png')
 loadSprite('evil-shroom', '/evil-shroom.png')
-// loadSprite('brick', 'pogC9x5.png')
 loadSprite('block', '/block.png')
 loadSprite('mario', '/mario.png')
 loadSprite('mushroom', '/mushroom.png')
@@ -29,6 +28,11 @@ loadSprite('pipe-top-right', '/pipe-top-right.png')
 loadSprite('pipe-bottom-left', '/pipe-bottom-left.png')
 loadSprite('pipe-bottom-right', '/pipe-bottom-right.png')
 //loadSprite('mario-jump', '/mario-jump.png')
+loadSprite('blue-block', '/blue-block.png')
+loadSprite('blue-brick', '/blue-brick.png')
+loadSprite('blue-steel', '/blue-steel.png')
+loadSprite('blue-evil-shroom', '/blue-evil-shroom.png')
+loadSprite('blue-surprise', '/blue-surprise.png')
 
 scene("game", ({ level, score }) => {
   layers(['bg', 'obj', 'iu'], 'obj')
@@ -63,7 +67,7 @@ scene("game", ({ level, score }) => {
   const levelCfg = {
     width: 20,
     height: 20,
-    '=': [sprite('block'), solid()],
+    '=': [sprite('block'), solid(), 'destroy-block'],
     '$': [sprite('coin'), 'coin', body()],
     '%': [sprite('surprise'), solid(), 'coin-surprise'],
     '*': [sprite('surprise'), solid(), 'mushroom-surprise'],
@@ -73,7 +77,12 @@ scene("game", ({ level, score }) => {
     '-': [sprite('pipe-top-left'), solid(), scale(0.5), 'pipe'],
     '+': [sprite('pipe-top-right'), solid(), scale(0.5), 'pipe'],
     '^': [sprite('evil-shroom'), solid(), 'dangerous', body()],
-    '#': [sprite('mushroom'), solid(), 'mushroom', body()]
+    '#': [sprite('mushroom'), solid(), 'mushroom', body()],
+    '!': [sprite('blue-block'), solid(), scale(0.5)],
+    '£': [sprite('blue-brick'), solid(), scale(0.5)],
+    //'z': [sprite('blue-evil-shroom'), solid(), scale(0.5), 'dangerous'],
+    //'@': [sprite('blue-surprise'), solid(), scale(0.5), 'coin-surprise'],
+    'x': [sprite('blue-steel'), solid(), scale(0.5)],
   }
 
   const gameLevel = addLevel(maps[level], levelCfg);
@@ -147,6 +156,9 @@ scene("game", ({ level, score }) => {
       destroy(obj);
       gameLevel.spawn('}', obj.gridPos.sub(0, 0));
     }
+    if (obj.is('destroy-block')) {
+      destroy(obj);
+    }
   })
 
   player.collides("mushroom", (m) => {
@@ -214,7 +226,7 @@ scene("game", ({ level, score }) => {
 
 scene("lose", ({ score }) => {
   add([
-    text("ESTAS MUERTO", 30,),
+    text("SCORE", 30,),
     origin("center"),
     pos(width() / 2, height() / 2.7)
   ])
